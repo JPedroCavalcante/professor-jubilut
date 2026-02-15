@@ -19,6 +19,11 @@ abstract class AbstractRepository implements RepositoryInterface
         return $this->model->orderBy('id', 'desc')->get();
     }
 
+    public function paginate($perPage = 15)
+    {
+        return $this->model->orderBy('id', 'desc')->paginate($perPage);
+    }
+
     public function find($id)
     {
         return $this->model->findOrFail($id);

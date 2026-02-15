@@ -1,8 +1,8 @@
 import api from './api'
 
 export default {
-  list() {
-    return api.get('/admin/courses')
+  list(page = 1) {
+    return api.get(`/admin/courses?page=${page}`)
   },
   get(id) {
     return api.get(`/admin/courses/${id}`)

@@ -5,20 +5,23 @@ import studentService from '@/services/studentService'
 
 const router = useRouter()
 const students = ref([])
+const pagination = ref({})
 const loading = ref(false)
 const errorMessage = ref('')
 const filterName = ref('')
 const filterEmail = ref('')
 
-async function fetchStudents() {
+async function fetchStudents(page = 1) {
   loading.value = true
   errorMessage.value = ''
   try {
     const response = await studentService.list({
       name: filterName.value,
       email: filterEmail.value,
+      page: page
     })
-    students.value = response.data
+    students.value = response.data.data
+    pagination.value = response.data.meta
   } catch (error) {
     errorMessage.value = 'Erro ao carregar alunos.'
   } finally {
@@ -26,11 +29,16 @@ async function fetchStudents() {
   }
 }
 
+function changePage(page) {
+  if (page < 1 || page > pagination.value.last_page) return
+  fetchStudents(page)
+}
+
 async function deleteStudent(id) {
   if (!confirm('Tem certeza que deseja excluir este aluno?')) return
   try {
     await studentService.delete(id)
-    students.value = students.value.filter((s) => s.id !== id)
+    fetchStudents(pagination.value.current_page) // Refresh current page
   } catch (error) {
     errorMessage.value = 'Erro ao excluir aluno.'
   }
@@ -41,7 +49,7 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('pt-BR')
 }
 
-onMounted(fetchStudents)
+onMounted(() => fetchStudents(1))
 </script>
 
 <template>
@@ -59,23 +67,22 @@ onMounted(fetchStudents)
       </button>
     </div>
 
-
     <div class="filter-bar">
       <input
         v-model="filterName"
         type="text"
         class="form-control"
         placeholder="Filtrar por nome..."
-        @keyup.enter="fetchStudents"
+        @keyup.enter="fetchStudents(1)"
       />
       <input
         v-model="filterEmail"
         type="text"
         class="form-control"
         placeholder="Filtrar por e-mail..."
-        @keyup.enter="fetchStudents"
+        @keyup.enter="fetchStudents(1)"
       />
-      <button class="btn btn-primary" @click="fetchStudents">
+      <button class="btn btn-primary" @click="fetchStudents(1)">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
         </svg>
@@ -122,7 +129,6 @@ onMounted(fetchStudents)
               <span class="badge badge-gray">{{ formatDate(student.birth_date) }}</span>
             </td>
             <td class="actions">
-
               <button
                 class="btn btn-sm"
                 style="background:var(--color-success-light);color:var(--color-success-dark);border:none;"
@@ -151,7 +157,7 @@ onMounted(fetchStudents)
                 style="background:var(--color-danger-light);color:var(--color-danger-dark);border:none;"
                 @click="deleteStudent(student.id)"
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                   <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
                 </svg>
                 Excluir
@@ -170,6 +176,27 @@ onMounted(fetchStudents)
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div v-if="pagination.last_page > 1" class="pagination-controls" style="display:flex;justify-content:center;gap:10px;margin-top:20px;">
+        <button 
+            class="btn btn-sm" 
+            :disabled="pagination.current_page === 1"
+            @click="changePage(pagination.current_page - 1)"
+        >
+            Anterior
+        </button>
+        <span style="display:flex;align-items:center;">
+            Página {{ pagination.current_page }} de {{ pagination.last_page }}
+        </span>
+        <button 
+            class="btn btn-sm" 
+            :disabled="pagination.current_page === pagination.last_page"
+            @click="changePage(pagination.current_page + 1)"
+        >
+            Próxima
+        </button>
     </div>
   </div>
 </template>

@@ -13,8 +13,8 @@ class ListCourseService
         $this->courseRepository = $courseRepository;
     }
 
-    public function execute()
+    public function execute($perPage = 15)
     {
-        return $this->courseRepository->all();
+        return $this->courseRepository->paginate($perPage);
     }
 }

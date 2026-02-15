@@ -11,7 +11,7 @@ class StudentRepository extends AbstractRepository
         parent::__construct($model);
     }
 
-    public function list($filters = [])
+    public function list($filters = [], $perPage = 15)
     {
         $query = $this->model->query();
 
@@ -23,6 +23,6 @@ class StudentRepository extends AbstractRepository
             $query->where('email', 'ilike', '%' . $filters['email'] . '%');
         }
 
-        return $query->orderBy('id', 'desc')->get();
+        return $query->orderBy('id', 'desc')->paginate($perPage);
     }
 }

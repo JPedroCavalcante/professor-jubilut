@@ -5,15 +5,17 @@ import courseService from '@/services/courseService'
 
 const router = useRouter()
 const courses = ref([])
+const pagination = ref({})
 const loading = ref(false)
 const errorMessage = ref('')
 
-async function fetchCourses() {
+async function fetchCourses(page = 1) {
   loading.value = true
   errorMessage.value = ''
   try {
-    const response = await courseService.list()
-    courses.value = response.data
+    const response = await courseService.list(page)
+    courses.value = response.data.data
+    pagination.value = response.data.meta
   } catch (error) {
     errorMessage.value = 'Erro ao carregar cursos.'
   } finally {
@@ -21,11 +23,16 @@ async function fetchCourses() {
   }
 }
 
+function changePage(page) {
+  if (page < 1 || page > pagination.value.last_page) return
+  fetchCourses(page)
+}
+
 async function deleteCourse(id) {
   if (!confirm('Tem certeza que deseja excluir este curso?')) return
   try {
     await courseService.delete(id)
-    courses.value = courses.value.filter((c) => c.id !== id)
+    fetchCourses(pagination.value.current_page)
   } catch (error) {
     errorMessage.value = 'Erro ao excluir curso.'
   }
@@ -36,7 +43,7 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('pt-BR')
 }
 
-onMounted(fetchCourses)
+onMounted(() => fetchCourses(1))
 </script>
 
 <template>
@@ -126,6 +133,27 @@ onMounted(fetchCourses)
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div v-if="pagination.last_page > 1" class="pagination-controls" style="display:flex;justify-content:center;gap:10px;margin-top:20px;">
+        <button 
+            class="btn btn-sm" 
+            :disabled="pagination.current_page === 1"
+            @click="changePage(pagination.current_page - 1)"
+        >
+            Anterior
+        </button>
+        <span style="display:flex;align-items:center;">
+            Página {{ pagination.current_page }} de {{ pagination.last_page }}
+        </span>
+        <button 
+            class="btn btn-sm" 
+            :disabled="pagination.current_page === pagination.last_page"
+            @click="changePage(pagination.current_page + 1)"
+        >
+            Próxima
+        </button>
     </div>
   </div>
 </template>

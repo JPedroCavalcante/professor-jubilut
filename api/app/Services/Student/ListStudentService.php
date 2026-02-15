@@ -13,8 +13,8 @@ class ListStudentService
         $this->studentRepository = $studentRepository;
     }
 
-    public function execute(array $filters = [])
+    public function execute(array $filters = [], $perPage = 15)
     {
-        return $this->studentRepository->list($filters);
+        return $this->studentRepository->list($filters, $perPage);
     }
 }
