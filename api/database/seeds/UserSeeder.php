@@ -7,18 +7,22 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        User::create([
-            'name'     => 'Administrador',
-            'email'    => 'admin@jubilut.com.br',
-            'password' => bcrypt('password'),
-            'role'     => 'admin',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@jubilut.com.br'],
+            [
+                'name' => 'Administrador',
+                'password' => bcrypt('password'),
+                'role' => 'admin',
+            ]
+        );
 
-        User::create([
-            'name'     => 'Aluno Placeholder',
-            'email'    => 'student@jubilut.com.br',
-            'password' => bcrypt('password'),
-            'role'     => 'student',
-        ]);
+        User::firstOrCreate(
+            ['email' => 'student@jubilut.com.br'],
+            [
+                'name' => 'Aluno Placeholder',
+                'password' => bcrypt('password'),
+                'role' => 'student',
+            ]
+        );
     }
 }

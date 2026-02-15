@@ -7,10 +7,10 @@ class ProfessorSeeder extends Seeder
 {
     public function run()
     {
-        Professor::create(['name' => 'Paulo Jubilut', 'email' => 'jubilut@prof.com']);
-        Professor::create(['name' => 'Maria Silva', 'email' => 'maria.silva@prof.com']);
-        Professor::create(['name' => 'Carlos Santos', 'email' => 'carlos.santos@prof.com']);
-        Professor::create(['name' => 'Ana Oliveira', 'email' => 'ana.oliveira@prof.com']);
-        Professor::create(['name' => 'Roberto Lima', 'email' => 'roberto.lima@prof.com']);
+        Professor::firstOrCreate(['email' => 'jubilut@prof.com'], ['name' => 'Paulo Jubilut']);
+        Professor::firstOrCreate(['email' => 'maria.silva@prof.com'], ['name' => 'Maria Silva']);
+        Professor::firstOrCreate(['email' => 'carlos.santos@prof.com'], ['name' => 'Carlos Santos']);
+        Professor::firstOrCreate(['email' => 'ana.oliveira@prof.com'], ['name' => 'Ana Oliveira']);
+        Professor::firstOrCreate(['email' => 'roberto.lima@prof.com'], ['name' => 'Roberto Lima']);
     }
 }
