@@ -31,7 +31,7 @@ async function handleLogin() {
 
 <template>
   <div class="login-card">
-    <!-- Logo / Brand -->
+
     <div class="login-brand">
       <div class="login-logo" aria-hidden="true">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -56,7 +56,7 @@ async function handleLogin() {
     <h2 class="login-heading">Entrar na plataforma</h2>
     <p class="login-description">Acesse com suas credenciais para continuar.</p>
 
-    <!-- Error alert -->
+
     <div v-if="errorMessage" class="alert alert-error" role="alert">
       <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" style="flex-shrink:0;margin-top:1px">
         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
