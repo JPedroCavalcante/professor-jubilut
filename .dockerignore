@@ -1,0 +1,7 @@
+.git
+.idea
+api/vendor
+api/node_modules
+front/node_modules
+front/dist
+docker/postgres/data
