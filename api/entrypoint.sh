@@ -29,5 +29,25 @@ fi
 
 chmod -R 777 storage bootstrap/cache
 
+echo "Aguardando banco de dados..."
+until php artisan migrate:status > /dev/null 2>&1; do
+    echo "Banco de dados indisponivel. Tentando novamente em 3s..."
+    sleep 3
+done
+
+echo "Publicando configs do JWT..."
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider" --no-interaction 2>/dev/null || true
+
+if [ -z "$JWT_SECRET" ] || [ "$JWT_SECRET" = "" ]; then
+    echo "Gerando JWT secret..."
+    php artisan jwt:secret --no-interaction
+fi
+
+echo "Executando migrations..."
+php artisan migrate --force
+
+echo "Executando seeds..."
+php artisan db:seed --force
+
 echo "Iniciando PHP-FPM..."
 exec php-fpm
