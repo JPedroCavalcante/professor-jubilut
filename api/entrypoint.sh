@@ -1,16 +1,16 @@
 #!/bin/bash
 
 if [ ! -f "artisan" ]; then
-    echo "🚀 Laravel não encontrado. Instalando Laravel 5.8..."
+    echo "Laravel não encontrado. Instalando Laravel 5.8..."
     
     composer create-project --prefer-dist laravel/laravel /tmp/laravel_install "5.8.*"
     
-    echo "🚚 Movendo arquivos para a raiz..."
+    echo "Movendo arquivos para a raiz..."
     cp -a /tmp/laravel_install/. .
     
     rm -rf /tmp/laravel_install
     
-    echo "🔧 Configurando .env..."
+    echo "Configurando .env..."
     if [ ! -f ".env" ]; then
         cp .env.example .env
     fi
@@ -23,11 +23,11 @@ if [ ! -f "artisan" ]; then
     sed -i 's/DB_PASSWORD=/DB_PASSWORD=laravel/g' .env
     
 else
-    echo "✅ Laravel já instalado. Instalando dependências..."
+    echo "Laravel já instalado. Instalando dependências..."
     composer install
 fi
 
 chmod -R 777 storage bootstrap/cache
 
-echo "🏁 Iniciando PHP-FPM..."
+echo "Iniciando PHP-FPM..."
 exec php-fpm
