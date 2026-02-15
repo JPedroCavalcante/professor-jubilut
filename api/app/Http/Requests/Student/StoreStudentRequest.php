@@ -33,6 +33,18 @@ class StoreStudentRequest extends FormRequest
         return $rules;
     }
 
+    public function messages()
+    {
+        return [
+            'name.required' => 'O nome é obrigatório.',
+            'email.required' => 'O e-mail é obrigatório.',
+            'email.email' => 'Insira um e-mail válido.',
+            'email.unique' => 'Este e-mail já está em uso.',
+            'birth_date.date' => 'A data de nascimento deve ser uma data válida.',
+            'password.min' => 'A senha deve ter no mínimo 6 caracteres.',
+        ];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(

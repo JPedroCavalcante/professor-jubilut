@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Enrollment;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class LoginRequest extends FormRequest
+class StoreEnrollmentRequest extends FormRequest
 {
     public function authorize()
     {
@@ -16,17 +16,15 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'course_id' => 'required|exists:courses,id',
         ];
     }
 
     public function messages()
     {
         return [
-            'email.required' => 'O e-mail é obrigatório.',
-            'email.email' => 'Insira um e-mail válido.',
-            'password.required' => 'A senha é obrigatória.',
+            'course_id.required' => 'O campo curso é obrigatório.',
+            'course_id.exists' => 'O curso selecionado é inválido.',
         ];
     }
 

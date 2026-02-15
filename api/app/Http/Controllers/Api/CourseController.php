@@ -4,40 +4,42 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Course\StoreCourseRequest;
-use App\Course;
+use App\Services\Course\ListCourseService;
+use App\Services\Course\CreateCourseService;
+use App\Services\Course\FindCourseService;
+use App\Services\Course\UpdateCourseService;
+use App\Services\Course\DeleteCourseService;
+use App\Http\Resources\CourseResource;
 
 class CourseController extends Controller
 {
-    public function index()
+    public function index(ListCourseService $service)
     {
-        $courses = Course::orderBy('id', 'desc')->get();
-        return response()->json($courses);
+        $courses = $service->execute();
+        return CourseResource::collection($courses);
     }
 
-    public function store(StoreCourseRequest $request)
+    public function store(StoreCourseRequest $request, CreateCourseService $service)
     {
-        $course = Course::create($request->validated());
-        return response()->json($course, 201);
+        $service->execute($request->validated());
+        return response()->json(null, 201);
     }
 
-    public function show($id)
+    public function show($id, FindCourseService $service)
     {
-        $course = Course::findOrFail($id);
-        return response()->json($course);
+        $course = $service->execute($id);
+        return new CourseResource($course);
     }
 
-    public function update(StoreCourseRequest $request, $id)
+    public function update(StoreCourseRequest $request, $id, UpdateCourseService $service)
     {
-        $course = Course::findOrFail($id);
-        $course->update($request->validated());
-
-        return response()->json($course);
+        $service->execute($id, $request->validated());
+        return response()->json(null, 204);
     }
 
-    public function destroy($id)
+    public function delete($id, DeleteCourseService $service)
     {
-        $course = Course::findOrFail($id);
-        $course->delete();
-        return response()->json(['message' => 'Course deleted successfully.']);
+        $service->execute($id);
+        return response()->json(null, 204);
     }
 }

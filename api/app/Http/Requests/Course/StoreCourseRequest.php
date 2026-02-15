@@ -23,6 +23,14 @@ class StoreCourseRequest extends FormRequest
         ];
     }
 
+    public function messages()
+    {
+        return [
+            'title.required' => 'O título do curso é obrigatório.',
+            'title.max' => 'O título não pode ter mais de 255 caracteres.',
+        ];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(

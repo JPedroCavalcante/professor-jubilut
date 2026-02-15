@@ -4,91 +4,43 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\StoreStudentRequest;
-use App\Student;
-use App\User;
+use App\Services\Student\ListStudentService;
+use App\Services\Student\CreateStudentService;
+use App\Services\Student\FindStudentService;
+use App\Services\Student\UpdateStudentService;
+use App\Services\Student\DeleteStudentService;
+use App\Http\Resources\StudentResource;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, ListStudentService $service)
     {
-        $query = Student::query();
-
-        if ($request->has('name') && $request->name) {
-            $query->where('name', 'ilike', '%' . $request->name . '%');
-        }
-
-        if ($request->has('email') && $request->email) {
-            $query->where('email', 'ilike', '%' . $request->email . '%');
-        }
-
-        $students = $query->orderBy('id', 'desc')->get();
-
-        return response()->json($students);
+        $students = $service->execute($request->only('name', 'email'));
+        return StudentResource::collection($students);
     }
 
-    public function store(StoreStudentRequest $request)
+    public function store(StoreStudentRequest $request, CreateStudentService $service)
     {
-        $validated = $request->validated();
-
-        $user = User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'role' => 'student',
-        ]);
-
-        $student = Student::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'birth_date' => $validated['birth_date'] ?? null,
-            'user_id' => $user->id,
-        ]);
-
-        return response()->json($student, 201);
+        $service->execute($request->validated());
+        return response()->json(null, 201);
     }
 
-    public function show($id)
+    public function show($id, FindStudentService $service)
     {
-        $student = Student::findOrFail($id);
-
-        return response()->json($student);
+        $student = $service->execute($id);
+        return new StudentResource($student);
     }
 
-    public function update(StoreStudentRequest $request, $id)
+    public function update(StoreStudentRequest $request, $id, UpdateStudentService $service)
     {
-        $student = Student::findOrFail($id);
-        $validated = $request->validated();
-
-        $student->update([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'birth_date' => $validated['birth_date'],
-        ]);
-
-        $user = User::find($student->user_id);
-        if ($user) {
-            $updateData = [
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-            ];
-            if (!empty($validated['password'])) {
-                $updateData['password'] = bcrypt($validated['password']);
-            }
-            $user->update($updateData);
-        }
-
-        return response()->json($student);
+        $service->execute($id, $request->validated());
+        return response()->json(null, 204);
     }
 
-    public function destroy($id)
+    public function delete($id, DeleteStudentService $service)
     {
-        $student = Student::findOrFail($id);
-        $userId = $student->user_id;
-        $student->delete();
-
-        User::where('id', $userId)->delete();
-
-        return response()->json(['message' => 'Student deleted successfully.']);
+        $service->execute($id);
+        return response()->json(null, 204);
     }
 }

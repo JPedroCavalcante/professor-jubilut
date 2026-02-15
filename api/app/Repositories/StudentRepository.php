@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Student;
+
+class StudentRepository extends AbstractRepository
+{
+    public function __construct(Student $model)
+    {
+        parent::__construct($model);
+    }
+
+    public function list($filters = [])
+    {
+        $query = $this->model->query();
+
+        if (!empty($filters['name'])) {
+            $query->where('name', 'ilike', '%' . $filters['name'] . '%');
+        }
+
+        if (!empty($filters['email'])) {
+            $query->where('email', 'ilike', '%' . $filters['email'] . '%');
+        }
+
+        return $query->orderBy('id', 'desc')->get();
+    }
+}

@@ -3,47 +3,42 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Enrollment\StoreEnrollmentRequest;
+use App\Services\Enrollment\ListStudentEnrollmentsService;
+use App\Services\Enrollment\EnrollStudentService;
+use App\Services\Enrollment\UnenrollStudentService;
+use App\Http\Resources\CourseResource;
 use App\Student;
-use Illuminate\Http\Request;
+use Exception;
 
 class EnrollmentController extends Controller
 {
-    public function getMyCourses()
+    public function getMyCourses(ListStudentEnrollmentsService $service)
     {
         $student = Student::where('user_id', auth()->id())->firstOrFail();
-
-        return response()->json($student->courses);
+        $courses = $service->execute($student->id);
+        return CourseResource::collection($courses);
     }
 
-    public function getStudentCourses($studentId)
+    public function getStudentCourses($studentId, ListStudentEnrollmentsService $service)
     {
-        $student = Student::with('courses')->findOrFail($studentId);
-
-        return response()->json($student->courses);
+        $courses = $service->execute($studentId);
+        return CourseResource::collection($courses);
     }
 
-    public function store(Request $request, $studentId)
+    public function store(StoreEnrollmentRequest $request, $studentId, EnrollStudentService $service)
     {
-        $student = Student::findOrFail($studentId);
-
-        $request->validate([
-            'course_id' => 'required|exists:courses,id',
-        ]);
-
-        if ($student->courses()->where('course_id', $request->course_id)->exists()) {
-            return response()->json(['message' => 'Student is already enrolled in this course.'], 422);
+        try {
+            $service->execute($studentId, $request->course_id);
+            return response()->json(null, 201);
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
         }
-
-        $student->courses()->attach($request->course_id);
-
-        return response()->json(['message' => 'Enrolled successfully.'], 201);
     }
 
-    public function destroy($studentId, $courseId)
+    public function delete($studentId, $courseId, UnenrollStudentService $service)
     {
-        $student = Student::findOrFail($studentId);
-        $student->courses()->detach($courseId);
-
-        return response()->json(['message' => 'Unenrolled successfully.']);
+        $service->execute($studentId, $courseId);
+        return response()->json(null, 204);
     }
 }
