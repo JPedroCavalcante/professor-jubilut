@@ -19,7 +19,7 @@ class EnrollmentTest extends TestCase
         ]);
 
         $response = $this->postJson('/api/login', [
-            'email'    => $admin->email,
+            'email' => $admin->email,
             'password' => 'password',
         ]);
 
@@ -39,7 +39,7 @@ class EnrollmentTest extends TestCase
         $response->assertStatus(201);
         $this->assertDatabaseHas('enrollments', [
             'student_id' => $student->id,
-            'course_id'  => $course->id,
+            'course_id' => $course->id,
         ]);
     }
 
@@ -71,10 +71,10 @@ class EnrollmentTest extends TestCase
             'Authorization' => 'Bearer ' . $token,
         ]);
 
-        $response->assertStatus(200);
+        $response->assertStatus(204);
         $this->assertDatabaseMissing('enrollments', [
             'student_id' => $student->id,
-            'course_id'  => $course->id,
+            'course_id' => $course->id,
         ]);
     }
 }
