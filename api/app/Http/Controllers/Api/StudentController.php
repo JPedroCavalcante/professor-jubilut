@@ -32,16 +32,16 @@ class StudentController extends Controller
         $validated = $request->validated();
 
         $user = User::create([
-            'name' => $validated['nome'],
+            'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => bcrypt($validated['password']),
             'role' => 'student',
         ]);
 
         $student = Student::create([
-            'nome' => $validated['nome'],
+            'name' => $validated['name'],
             'email' => $validated['email'],
-            'data_nascimento' => $validated['data_nascimento'],
+            'birth_date' => $validated['birth_date'] ?? null,
             'user_id' => $user->id,
         ]);
 
@@ -66,7 +66,6 @@ class StudentController extends Controller
             'birth_date' => $validated['birth_date'],
         ]);
 
-        // Sync user record
         $user = User::find($student->user_id);
         if ($user) {
             $updateData = [

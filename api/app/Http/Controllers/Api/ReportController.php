@@ -25,7 +25,7 @@ class ReportController extends Controller
             if ($students->isEmpty()) {
                 $report[] = [
                     'course_id' => $course->id,
-                    'course_title' => $course->titulo,
+                    'course_title' => $course->title,
                     'avg_age' => 0,
                     'youngest' => null,
                     'oldest' => null,
@@ -52,7 +52,7 @@ class ReportController extends Controller
 
             $report[] = [
                 'course_id' => $course->id,
-                'course_title' => $course->titulo,
+                'course_title' => $course->title,
                 'avg_age' => $avgAge,
                 'youngest' => $youngest,
                 'oldest' => $oldest,

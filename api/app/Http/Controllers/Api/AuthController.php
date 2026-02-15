@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Student;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -22,15 +23,21 @@ class AuthController extends Controller
         }
 
         $user = auth()->user();
+        $studentId = null;
+        if ($user->role === 'student') {
+            $student = Student::where('user_id', $user->id)->first();
+            $studentId = $student ? $student->id : null;
+        }
 
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'bearer',
             'user'         => [
-                'id'    => $user->id,
-                'name'  => $user->name,
-                'email' => $user->email,
-                'role'  => $user->role,
+                'id'         => $user->id,
+                'student_id' => $studentId,
+                'name'       => $user->name,
+                'email'      => $user->email,
+                'role'       => $user->role,
             ],
         ]);
     }
@@ -45,12 +52,18 @@ class AuthController extends Controller
     public function me()
     {
         $user = auth()->user();
+        $studentId = null;
+        if ($user->role === 'student') {
+            $student = Student::where('user_id', $user->id)->first();
+            $studentId = $student ? $student->id : null;
+        }
 
         return response()->json([
-            'id'    => $user->id,
-            'name'  => $user->name,
-            'email' => $user->email,
-            'role'  => $user->role,
+            'id'         => $user->id,
+            'student_id' => $studentId,
+            'name'       => $user->name,
+            'email'      => $user->email,
+            'role'       => $user->role,
         ]);
     }
 }

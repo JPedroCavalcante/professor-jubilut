@@ -22,5 +22,6 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('student')->middleware('role:student')->group(function () {
         Route::get('/profile', 'Api\ProfileController@show');
         Route::put('/profile', 'Api\ProfileController@update');
+        Route::get('/courses', 'Api\EnrollmentController@getMyCourses');
     });
 });

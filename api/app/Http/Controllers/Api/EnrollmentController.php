@@ -8,6 +8,13 @@ use Illuminate\Http\Request;
 
 class EnrollmentController extends Controller
 {
+    public function getMyCourses()
+    {
+        $student = Student::where('user_id', auth()->id())->firstOrFail();
+
+        return response()->json($student->courses);
+    }
+
     public function getStudentCourses($studentId)
     {
         $student = Student::with('courses')->findOrFail($studentId);
