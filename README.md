@@ -80,6 +80,45 @@ Após rodar os seeders, os seguintes usuários estarão disponíveis:
 - **CORS** via `fruitcake/laravel-cors`
 - **PHPUnit 7.5** para testes
 
+### Diferenças em relação ao Laravel padrão
+
+A instalação padrão do Laravel assume uma aplicação web convencional com renderização server-side. Este projeto diverge em vários pontos deliberados:
+
+**1. API-only — sem Blade, sem rotas web**
+
+O arquivo `routes/web.php` não é utilizado. Toda a comunicação ocorre via `routes/api.php`, e todos os controladores retornam exclusivamente JSON. Não há views, templates ou sessões HTTP.
+
+**2. Autenticação stateless com JWT**
+
+O Laravel 5.8 utiliza autenticação baseada em sessão por padrão. Aqui isso é substituído por `tymon/jwt-auth`: o login retorna um token JWT que o cliente armazena e envia no header `Authorization: Bearer <token>` em cada requisição. Não há cookies de sessão.
+
+**3. Autorização por middleware customizado, sem Gates nem Policies**
+
+Em vez do sistema nativo de Gates e Policies do Laravel, a autorização é feita pelo middleware `CheckRole`, que compara o campo `role` do usuário autenticado com o perfil exigido pela rota (`admin` ou `student`). A escolha mantém a lógica simples dado que há apenas dois perfis fixos.
+
+**4. Form Requests sempre retornam JSON**
+
+Por padrão, quando um Form Request falha, o Laravel redireciona o usuário de volta com os erros na sessão — comportamento adequado para apps web, mas inadequado para APIs. Todos os Form Requests deste projeto sobrescrevem o método `failedValidation` para lançar uma `HttpResponseException` com resposta `422` em JSON, independentemente do header `Accept` da requisição.
+
+**5. Camadas Service e Repository além do MVC padrão**
+
+O Laravel não impõe camadas além de Model-View-Controller. Para desacoplar responsabilidades, este projeto adiciona:
+
+- **Services** (`app/Services/`): contêm a lógica de negócio. Os controladores delegam operações aos services, sem acessar models diretamente.
+- **Repositories** (`app/Repositories/`): encapsulam o acesso ao banco de dados. Um `AbstractRepository` implementa as operações comuns (CRUD, paginação), e os repositórios concretos estendem ou especializam esse comportamento.
+
+```
+Controller -> Service -> Repository -> Model (Eloquent) -> Banco
+```
+
+**6. CORS via pacote**
+
+O suporte nativo a CORS foi adicionado ao Laravel apenas na versão 7. Como este projeto usa Laravel 5.8, o CORS é gerenciado pelo pacote `fruitcake/laravel-cors`.
+
+**7. PostgreSQL em vez de MySQL**
+
+O Laravel assume MySQL como banco padrão. Aqui o driver é `pgsql` com PostgreSQL 13, sem impacto na API do Eloquent, mas relevante para configurações de conexão e tipos de coluna.
+
 ### Princípios
 
 O backend é uma **API REST pura**. Não há views Blade ou renderização de HTML. Todas as respostas são em JSON.
