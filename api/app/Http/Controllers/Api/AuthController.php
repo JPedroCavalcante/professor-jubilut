@@ -20,6 +20,10 @@ class AuthController extends Controller
     {
         $result = $this->authService->login($request->only('email', 'password'));
 
+        if ($result === null) {
+            return response()->json(['message' => 'Credenciais inválidas.'], 401);
+        }
+
         if (isset($result['error'])) {
             return response()->json(['message' => $result['error']], $result['status']);
         }
