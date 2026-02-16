@@ -29,6 +29,12 @@ fi
 
 chmod -R 777 storage bootstrap/cache
 
+APP_KEY_VALUE=$(grep "^APP_KEY=" .env 2>/dev/null | cut -d'=' -f2)
+if [ -z "$APP_KEY_VALUE" ]; then
+    echo "Gerando APP_KEY..."
+    php artisan key:generate --force
+fi
+
 echo "Aguardando banco de dados..."
 until php artisan migrate:status > /dev/null 2>&1; do
     echo "Banco de dados indisponivel. Tentando novamente em 3s..."
