@@ -10,7 +10,7 @@ RUN apt-get -o Acquire::Check-Valid-Until=false install -y \
     libzip-dev \
     unzip \
     git \
-    && docker-php-ext-install pdo pdo_pgsql zip
+    && docker-php-ext-install pdo pdo_pgsql zip opcache
 
 COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
 
