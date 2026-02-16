@@ -16,11 +16,11 @@ class StudentRepository extends AbstractRepository
         $query = $this->model->query();
 
         if (!empty($filters['name'])) {
-            $query->where('name', 'ilike', '%' . $filters['name'] . '%');
+            $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($filters['name']) . '%']);
         }
 
         if (!empty($filters['email'])) {
-            $query->where('email', 'ilike', '%' . $filters['email'] . '%');
+            $query->whereRaw('LOWER(email) LIKE ?', ['%' . strtolower($filters['email']) . '%']);
         }
 
         return $query->orderBy('id', 'desc')->paginate($perPage);
