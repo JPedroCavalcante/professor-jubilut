@@ -32,8 +32,8 @@ async function fetchData() {
       enrollmentService.getStudentCourses(studentId),
     ])
     student.value = studentRes.data
-    allCourses.value = coursesRes.data
-    enrolledCourses.value = enrolledRes.data
+    allCourses.value = coursesRes.data.data
+    enrolledCourses.value = enrolledRes.data.data
   } catch (error) {
     errorMessage.value = 'Erro ao carregar dados.'
   } finally {
@@ -51,7 +51,7 @@ async function enrollCourse() {
     successMessage.value = 'Matricula realizada com sucesso!'
     selectedCourseId.value = ''
     const res = await enrollmentService.getStudentCourses(studentId)
-    enrolledCourses.value = res.data
+    enrolledCourses.value = res.data.data
     setTimeout(() => { successMessage.value = '' }, 3000)
   } catch (error) {
     errorMessage.value = error.response?.data?.message || 'Erro ao matricular.'

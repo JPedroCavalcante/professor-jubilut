@@ -1,6 +1,9 @@
 import api from './api'
 
 export default {
+  getMyCourses() {
+    return api.get('/student/courses')
+  },
   getStudentCourses(studentId) {
     return api.get(`/admin/students/${studentId}/courses`)
   },
