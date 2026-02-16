@@ -14,14 +14,11 @@ const userInitial = computed(() => {
   return name.charAt(0).toUpperCase()
 })
 
-const studentId = computed(() => auth.user?.student_id || auth.user?.id)
-
 async function fetchCourses() {
-  if (!studentId.value) return
   loading.value = true
   try {
-    const res = await enrollmentService.getStudentCourses(studentId.value)
-    enrolledCourses.value = res.data
+    const res = await enrollmentService.getMyCourses()
+    enrolledCourses.value = res.data.data
   } catch {
     enrolledCourses.value = []
   } finally {

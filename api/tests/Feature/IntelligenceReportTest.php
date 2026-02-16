@@ -52,11 +52,11 @@ class IntelligenceReportTest extends TestCase
         $now = Carbon::now();
 
         $student1 = factory(Student::class)->create([
-            'birth_date' => $now->copy()->subYears(20)->format('Y-m-d'),
+            'birth_date' => $now->copy()->subYears(20)->subDays(1)->format('Y-m-d'),
         ]);
 
         $student2 = factory(Student::class)->create([
-            'birth_date' => $now->copy()->subYears(30)->format('Y-m-d'),
+            'birth_date' => $now->copy()->subYears(30)->subDays(1)->format('Y-m-d'),
         ]);
 
         $course->students()->attach([$student1->id, $student2->id]);
@@ -78,15 +78,15 @@ class IntelligenceReportTest extends TestCase
 
         $young = factory(Student::class)->create([
             'name' => 'Young Student',
-            'birth_date' => $now->copy()->subYears(18)->format('Y-m-d'),
+            'birth_date' => $now->copy()->subYears(18)->subDays(1)->format('Y-m-d'),
         ]);
         $mid = factory(Student::class)->create([
             'name' => 'Mid Student',
-            'birth_date' => $now->copy()->subYears(25)->format('Y-m-d'),
+            'birth_date' => $now->copy()->subYears(25)->subDays(1)->format('Y-m-d'),
         ]);
         $old = factory(Student::class)->create([
             'name' => 'Old Student',
-            'birth_date' => $now->copy()->subYears(40)->format('Y-m-d'),
+            'birth_date' => $now->copy()->subYears(40)->subDays(1)->format('Y-m-d'),
         ]);
 
         $course->students()->attach([$young->id, $mid->id, $old->id]);

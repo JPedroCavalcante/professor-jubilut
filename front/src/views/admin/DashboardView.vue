@@ -103,9 +103,9 @@ async function fetchAll() {
       subjectService.list(),
     ])
     report.value = reportRes.data
-    totalCourses.value = Array.isArray(coursesRes.data) ? coursesRes.data.length : 0
+    totalCourses.value = coursesRes.data.meta?.total ?? coursesRes.data.data?.length ?? 0
     totalProfessors.value = Array.isArray(professorsRes.data) ? professorsRes.data.length : 0
-    totalStudents.value = Array.isArray(studentsRes.data) ? studentsRes.data.length : 0
+    totalStudents.value = studentsRes.data.meta?.total ?? studentsRes.data.data?.length ?? 0
     totalSubjects.value = Array.isArray(subjectsRes.data) ? subjectsRes.data.length : 0
   } catch (error) {
     errorMessage.value = 'Erro ao carregar dados do dashboard.'
