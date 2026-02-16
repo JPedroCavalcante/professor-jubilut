@@ -26,7 +26,7 @@ class UpdateStudentService
             $this->studentRepository->update($id, [
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'birth_date' => $data['birth_date'],
+                'birth_date' => $data['birth_date'] ?? null,
             ]);
 
             $user = User::find($student->user_id);
